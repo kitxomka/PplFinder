@@ -6,8 +6,11 @@ import IconButton from "@material-ui/core/IconButton";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import * as S from "./style";
 
+
 const UserList = ({ users, isLoading }) => {
   const [hoveredUserId, setHoveredUserId] = useState();
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  
 
   const handleMouseEnter = (index) => {
     setHoveredUserId(index);
@@ -17,21 +20,86 @@ const UserList = ({ users, isLoading }) => {
     setHoveredUserId();
   };
 
+
+  /**
+   * Saving and fetch the favorite users array in/from local storage
+   */
+  const savedFavUsers = JSON.parse(localStorage.getItem('favUsers'));
+  const [favUsers, setFavUsers] = useState(savedFavUsers || []);
+
+  useEffect(() => {
+    localStorage.setItem('favUsers', JSON.stringify(favUsers));
+  }, [favUsers]);
+
+  /**
+   * @param {*} user 
+   * @returns true if the user nat exsist in filteredCountries array or if the filteredCountries array is empty(no selected checkboxes), otherwise returns false   
+   * 
+   */
+  const filterUsersByCountry = (user) => filteredCountries.length === 0 || filteredCountries.includes(user.nat); // add memozation?
+
+  /**
+   * @param {*} user 
+   * @returns array of favorite users
+   */
+  const handleClick = (user) => {
+    let tmpFavUsers = JSON.parse(JSON.stringify(favUsers));
+    let filrterArr = tmpFavUsers.filter(fabUser => fabUser.id?.value === user.id?.value);
+    let favIndex = tmpFavUsers.indexOf(filrterArr[0]); // some times indexOf will not find the (by referens)
+    if(tmpFavUsers.length > 0 && favIndex > -1){
+      tmpFavUsers.splice(favIndex, 1);
+    } else {
+      tmpFavUsers.push(user);
+    }
+    setFavUsers(tmpFavUsers);
+    // console.log('tmpFavUsers:', tmpFavUsers)
+  }
+
+  
+
+/**
+ * fav tab index save in local storage 
+ * cheking the page index if 0 render the all users arr if 1 render only the fav users 
+ */
+const tabIndex = localStorage.getItem('value');
+const userToShow = tabIndex === "1" ? favUsers : users;
+
+/**
+ * 
+ * @param {*} user 
+ * @returns true if the user in favUsers array 
+ */
+const checkUserLike = (user, favUsers) => {
+  if(favUsers.length > 0 ){
+    // console.log('favUsers>>>>', favUsers)
+    for(let i = 0; i < favUsers.length; i++){
+      let favUsersId = favUsers[i].id?.value;
+      if(favUsersId === user.id?.value){
+        // console.log('favUsers - ID', favUsersId);
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
   return (
     <S.UserList>
       <S.Filters>
-        <CheckBox value="BR" label="Brazil" />
-        <CheckBox value="AU" label="Australia" />
-        <CheckBox value="CA" label="Canada" />
-        <CheckBox value="DE" label="Germany" />
+        <CheckBox value="BR" label="Brazil" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
+        <CheckBox value="AU" label="Australia" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
+        <CheckBox value="CA" label="Canada" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
+        <CheckBox value="DE" label="Germany" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
+        <CheckBox value="ES" label="Spain" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
       </S.Filters>
       <S.List>
-        {users.map((user, index) => {
+        {userToShow.filter(filterUsersByCountry).map((user, index) => {
           return (
             <S.User
               key={index}
               onMouseEnter={() => handleMouseEnter(index)}
               onMouseLeave={handleMouseLeave}
+              onClick={() => handleClick(user)}
             >
               <S.UserPicture src={user?.picture.large} alt="" />
               <S.UserInfo>
@@ -46,7 +114,7 @@ const UserList = ({ users, isLoading }) => {
                   {user?.location.city} {user?.location.country}
                 </Text>
               </S.UserInfo>
-              <S.IconButtonWrapper isVisible={index === hoveredUserId}>
+              <S.IconButtonWrapper isVisible={index === hoveredUserId || checkUserLike(user, favUsers)} >
                 <IconButton>
                   <FavoriteIcon color="error" />
                 </IconButton>
@@ -63,5 +131,24 @@ const UserList = ({ users, isLoading }) => {
     </S.UserList>
   );
 };
+
+
+
+
+ /**
+   * @param {*} val 
+   * @returns array of checked checkbox (countries)
+   */
+  const handeleCheckBoxClick = ({val, filteredCountries, setFilteredCountries}) => {
+    let tmpFilteredCountries = JSON.parse(JSON.stringify(filteredCountries));
+    let index = tmpFilteredCountries.indexOf(val);
+    if(tmpFilteredCountries.length > 0 && index > -1){
+      tmpFilteredCountries.splice(index, 1)
+    }else{
+      tmpFilteredCountries.push(val);
+    }
+    setFilteredCountries(tmpFilteredCountries);
+  }
+
 
 export default UserList;

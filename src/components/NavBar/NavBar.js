@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import Tab from "@material-ui/core/Tab"
 
-const NavBar = () => {
-  const [value, setValue] = useState(0);
+
+const NavBar = (props) => {
+  const savedTabIndex = JSON.parse(localStorage.getItem('value'));
+  const [value, setValue] = useState(savedTabIndex || 0);
+
+  useEffect(() => {
+    localStorage.setItem('value', JSON.stringify(value));
+  }, [value]);
 
   const handleChange = (_e, newValue) => {
     setValue(newValue);
   };
 
+  props.jsFunction(value);
   return (
     <AppBar position="static" color="transparent" style={{ position: "fixed", top: 0 }}>
       <Tabs

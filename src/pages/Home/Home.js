@@ -4,9 +4,11 @@ import UserList from "components/UserList";
 import { usePeopleFetch } from "hooks";
 import * as S from "./style";
 
-const Home = () => {
+
+const Home = (props) => {
   const { users, isLoading } = usePeopleFetch();
 
+  console.log('props home:', props)
   return (
     <S.Home>
       <S.Content>
