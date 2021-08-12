@@ -5,10 +5,10 @@ import { usePeopleFetch } from "hooks";
 import * as S from "./style";
 
 
-const Home = (props) => {
+const Home = () => {
   const { users, isLoading } = usePeopleFetch();
 
-  console.log('props home:', props)
+
   return (
     <S.Home>
       <S.Content>
@@ -17,7 +17,7 @@ const Home = (props) => {
             PplFinder
           </Text>
         </S.Header>
-        <UserList users={users} isLoading={isLoading} />
+          <UserList users={users} isLoading={isLoading} />
       </S.Content>
     </S.Home>
   );

@@ -7,6 +7,8 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import * as S from "./style";
 
 
+
+
 const UserList = ({ users, isLoading }) => {
   const [hoveredUserId, setHoveredUserId] = useState();
   const [filteredCountries, setFilteredCountries] = useState([]);
@@ -20,7 +22,6 @@ const UserList = ({ users, isLoading }) => {
     setHoveredUserId();
   };
 
-
   /**
    * Saving and fetch the favorite users array in/from local storage
    */
@@ -30,6 +31,21 @@ const UserList = ({ users, isLoading }) => {
   useEffect(() => {
     localStorage.setItem('favUsers', JSON.stringify(favUsers));
   }, [favUsers]);
+
+/**
+   * @param {*} val 
+   * @returns array of checked checkbox (countries)
+   */
+  const handeleCheckBoxClick = ({val, filteredCountries, setFilteredCountries}) => {
+  let tmpFilteredCountries = JSON.parse(JSON.stringify(filteredCountries));
+  let index = tmpFilteredCountries.indexOf(val);
+  if(tmpFilteredCountries.length > 0 && index > -1){
+    tmpFilteredCountries.splice(index, 1)
+  }else{
+    tmpFilteredCountries.push(val);
+  }
+  setFilteredCountries(tmpFilteredCountries);
+  }
 
   /**
    * @param {*} user 
@@ -45,21 +61,19 @@ const UserList = ({ users, isLoading }) => {
   const handleClick = (user) => {
     let tmpFavUsers = JSON.parse(JSON.stringify(favUsers));
     let filrterArr = tmpFavUsers.filter(fabUser => fabUser.id?.value === user.id?.value);
-    let favIndex = tmpFavUsers.indexOf(filrterArr[0]); // some times indexOf will not find the (by referens)
+    let favIndex = tmpFavUsers.indexOf(filrterArr[0]); // some times indexOf will not find the needed object (by referens)
     if(tmpFavUsers.length > 0 && favIndex > -1){
       tmpFavUsers.splice(favIndex, 1);
     } else {
       tmpFavUsers.push(user);
     }
     setFavUsers(tmpFavUsers);
-    // console.log('tmpFavUsers:', tmpFavUsers)
+
   }
-
-  
-
+ 
 /**
- * fav tab index save in local storage 
- * cheking the page index if 0 render the all users arr if 1 render only the fav users 
+ * fet the fav-tab index from local storage 
+ * cheking the page index if its 1: render only the fav users else render the all users arr 
  */
 const tabIndex = localStorage.getItem('value');
 const userToShow = tabIndex === "1" ? favUsers : users;
@@ -71,18 +85,15 @@ const userToShow = tabIndex === "1" ? favUsers : users;
  */
 const checkUserLike = (user, favUsers) => {
   if(favUsers.length > 0 ){
-    // console.log('favUsers>>>>', favUsers)
     for(let i = 0; i < favUsers.length; i++){
       let favUsersId = favUsers[i].id?.value;
       if(favUsersId === user.id?.value){
-        // console.log('favUsers - ID', favUsersId);
         return true;
       }
     }
     return false;
   }
 }
-
   return (
     <S.UserList>
       <S.Filters>
@@ -126,29 +137,10 @@ const checkUserLike = (user, favUsers) => {
           <S.SpinnerWrapper>
             <Spinner color="primary" size="45px" thickness={6} variant="indeterminate" />
           </S.SpinnerWrapper>
-        )}
+        )} 
       </S.List>
     </S.UserList>
   );
 };
-
-
-
-
- /**
-   * @param {*} val 
-   * @returns array of checked checkbox (countries)
-   */
-  const handeleCheckBoxClick = ({val, filteredCountries, setFilteredCountries}) => {
-    let tmpFilteredCountries = JSON.parse(JSON.stringify(filteredCountries));
-    let index = tmpFilteredCountries.indexOf(val);
-    if(tmpFilteredCountries.length > 0 && index > -1){
-      tmpFilteredCountries.splice(index, 1)
-    }else{
-      tmpFilteredCountries.push(val);
-    }
-    setFilteredCountries(tmpFilteredCountries);
-  }
-
 
 export default UserList;

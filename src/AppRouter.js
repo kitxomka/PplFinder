@@ -8,16 +8,15 @@ const AppRouter = () => {
 
   const [tabIndex, setTabIndex] = useState("");
 
-  const jsFunction = (value) =>{
+  const handleTabSet = (value) =>{
     setTabIndex(value);
   }
 
   return (
     <ThemeProvider>
       <Router>
-        <NavBar jsFunction={jsFunction}/>
+        <NavBar handleTabSet={handleTabSet}/>
         <Switch>
-          {/* <Route exact path="/" component={Home} /> */}
           <Route exact path="/" render={(props) => (
             <Home {...props} isAuthed={true} tabIndex={tabIndex} />
           )} />

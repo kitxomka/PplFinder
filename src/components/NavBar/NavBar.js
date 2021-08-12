@@ -16,7 +16,7 @@ const NavBar = (props) => {
     setValue(newValue);
   };
 
-  props.jsFunction(value);
+  props.handleTabSet(value);
   return (
     <AppBar position="static" color="transparent" style={{ position: "fixed", top: 0 }}>
       <Tabs
