@@ -10,13 +10,13 @@ const NavBar = (props) => {
 
   useEffect(() => {
     localStorage.setItem('value', JSON.stringify(value));
+    props.handleTabSet(value);
   }, [value]);
 
   const handleChange = (_e, newValue) => {
     setValue(newValue);
   };
-
-  props.handleTabSet(value);
+ 
   return (
     <AppBar position="static" color="transparent" style={{ position: "fixed", top: 0 }}>
       <Tabs

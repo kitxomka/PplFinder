@@ -7,7 +7,6 @@ export const usePeopleFetch = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1)
 
-  
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -29,6 +28,6 @@ export const usePeopleFetch = () => {
       })
   }
 
-  return { users, isLoading, setIsLoading, page, setPage ,fetchUsers };
+  return { users, isLoading, page, setPage ,fetchUsers };
 
 };

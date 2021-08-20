@@ -5,10 +5,9 @@ import { ThemeProvider } from "theme";
 import NavBar from "components/NavBar";
 
 const AppRouter = () => {
-
   const [tabIndex, setTabIndex] = useState("");
 
-  const handleTabSet = (value) =>{
+  const handleTabSet = (value) => {
     setTabIndex(value);
   }
 
