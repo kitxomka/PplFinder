@@ -9,11 +9,10 @@ import * as S from "./style";
 
 
 
-const UserList = ({ users, isLoading }) => {
+const UserList = ({ users, isLoading, setIsLoading, page, setPage, fetchUsers }) => {
   const [hoveredUserId, setHoveredUserId] = useState();
   const [filteredCountries, setFilteredCountries] = useState([]);
   
-
   const handleMouseEnter = (index) => {
     setHoveredUserId(index);
   };
@@ -94,6 +93,18 @@ const checkUserLike = (user, favUsers) => {
     return false;
   }
 }
+
+const handleScroll = (e) => {
+  var bottom = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 50;
+  if(bottom){
+    if(!isLoading){
+      let pg = page + 1;
+      setPage(pg);
+      fetchUsers();
+    }
+  }
+} 
+
   return (
     <S.UserList>
       <S.Filters>
@@ -103,7 +114,7 @@ const checkUserLike = (user, favUsers) => {
         <CheckBox value="DE" label="Germany" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
         <CheckBox value="ES" label="Spain" onChange={(val) => handeleCheckBoxClick({val, filteredCountries, setFilteredCountries})} />
       </S.Filters>
-      <S.List>
+      <S.List onScroll={handleScroll}>
         {userToShow.filter(filterUsersByCountry).map((user, index) => {
           return (
             <S.User
